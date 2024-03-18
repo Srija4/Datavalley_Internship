@@ -19,7 +19,7 @@ class Organization implements Cloneable {
     }
 }
 
-public class Main {
+public class clonableConcept {
     public static void main(String[] args) {
         Organization org1 = new Organization(1, "Org1", "Address1");
         
