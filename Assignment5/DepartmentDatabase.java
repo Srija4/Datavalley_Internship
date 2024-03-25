@@ -1,53 +1,70 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class DepartmentDatabase {
-    
-    private static final String URL = "jdbc:oracle:thin:@localhost:1521:XE";
-    private static final String USERNAME = "gowri";
-    private static final String PASSWORD = "123456";
 
+    // JDBC URL, username, and password of MySQL server
+    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/departments";
+    private static final String USERNAME = "localhost";
+    private static final String PASSWORD = "root";
 
-    static class Department {
-        private int id;
-        private String name;
-
-        public Department(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
+    // JDBC variables for opening and managing connection
+    private static Connection connection;
 
     public static void main(String[] args) {
+        // Connect to MySQL database
         try {
-            
-            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            connection = DriverManager.getConnection(JDBC_URL, localhost, "root");
 
+            // Create a new department
+            Department department = new Department(1, "Engineering");
 
-            insertDepartment(connection, new Department(1, "IT"));
+            // Insert department into database
+            insertDepartment(department);
 
-           
-            connection.close();
-            System.out.println("Department inserted successfully.");
-        } 
-		catch (SQLException e) {
+            System.out.println("Department inserted successfully!");
+
+        } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Close the connection
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private static void insertDepartment(Connection connection, Department department) throws SQLException {
-        String query = "INSERT INTO department (id, name) VALUES (?, ?)";
-        PreparedStatement statement = connection.prepareStatement(query);
+    // Insert department into the database
+    private static void insertDepartment(Department department) throws SQLException {
+        String sql = "INSERT INTO department (id, name) VALUES (?, ?)";
+        PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, department.getId());
         statement.setString(2, department.getName());
         statement.executeUpdate();
         statement.close();
+    }
+}
+
+class Department {
+    private int id;
+    private String name;
+
+    public Department(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
     }
 }
