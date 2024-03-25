@@ -7,7 +7,7 @@ public class DepartmentDatabase {
 
     // JDBC URL, username, and password of MySQL server
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/departments";
-    private static final String USERNAME = "localhost";
+    private static final String USERNAME = "root"; // Corrected username
     private static final String PASSWORD = "root";
 
     // JDBC variables for opening and managing connection
@@ -16,7 +16,7 @@ public class DepartmentDatabase {
     public static void main(String[] args) {
         // Connect to MySQL database
         try {
-            connection = DriverManager.getConnection(JDBC_URL, localhost, "root");
+            connection = DriverManager.getConnection(JDBC_URL, USERNAME, PASSWORD); // Corrected username and password
 
             // Create a new department
             Department department = new Department(1, "Engineering");
@@ -43,11 +43,11 @@ public class DepartmentDatabase {
     // Insert department into the database
     private static void insertDepartment(Department department) throws SQLException {
         String sql = "INSERT INTO department (id, name) VALUES (?, ?)";
-        PreparedStatement statement = connection.prepareStatement(sql);
-        statement.setInt(1, department.getId());
-        statement.setString(2, department.getName());
-        statement.executeUpdate();
-        statement.close();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, department.getId());
+            statement.setString(2, department.getName());
+            statement.executeUpdate();
+        }
     }
 }
 
